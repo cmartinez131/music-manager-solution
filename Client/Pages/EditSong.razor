@@ -1,0 +1,80 @@
+@page "/EditSong/{id:guid}"
+@using music_manager_starter.Shared
+
+@inject HttpClient Http
+@inject NavigationManager Navigation
+
+@code {
+    [Parameter] public Guid Id { get; set; }
+    private Song song = new Song();
+    private string message;
+
+    protected override async Task OnInitializedAsync()
+    {
+        song = await Http.GetFromJsonAsync<Song>($"api/songs/{Id}");
+    }
+    private void CancelEdit()
+    {
+        Navigation.NavigateTo("/");
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        var response = await Http.PutAsJsonAsync($"api/songs/{song.Id}", song);
+        // Check thet the rating is between 1 and 10 or the rating. the Rating attribute is optional
+        if (song.Rating != null && (song.Rating < 1 || song.Rating > 10))
+        {
+            message = "Enter a rating between 1 and 10.";
+            return;
+        }
+        if (response.IsSuccessStatusCode)
+        {
+            message = "Song updated successfully!";
+        }
+        else
+        {
+            message = "Error updating song. Please try again.";
+        }
+        Navigation.NavigateTo("/");
+    }
+}
+
+<div class="p-6">
+    <h2 class="mb-4 text-xl font-semibold text-white">Edit Song</h2>
+    <EditForm Model="song" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="mb-4">
+            <label class="block text-gray-200">Title</label>
+            <InputText @bind-Value="song.Title" class="mt-1 block w-full p-2 border rounded" />
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-gray-200">Artist</label>
+            <InputText @bind-Value="song.Artist" class="mt-1 block w-full p-2 border rounded" />
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-gray-200">Album</label>
+            <InputText @bind-Value="song.Album" class="mt-1 block w-full p-2 border rounded" />
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-gray-200">Genre</label>
+            <InputText @bind-Value="song.Genre" class="mt-1 block w-full p-2 border rounded" />
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-gray-200">Rating</label>
+            <InputNumber @bind-Value="song.Rating" class="mt-1 block w-full p-2 border rounded" />
+        </div>
+        <button type="submit" class="bg-purple-600 text-white px-2 py-2 rounded">Update Song</button>
+    </EditForm>
+    <button @onclick="() => CancelEdit()" class="bg-slate-600 text-white px-2 py-2 mt-2 rounded">Cancel</button>
+
+    @if (message != null)
+    {
+        <p class="mt-4 text-green-500">@message</p>
+    }
+</div>

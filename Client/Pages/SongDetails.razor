@@ -1,0 +1,33 @@
+@page "/SongDetails/{id:guid}"
+@using music_manager_starter.Shared
+
+@inject HttpClient Http
+@inject NavigationManager Navigation
+
+@code {
+    [Parameter] public Guid Id { get; set; }
+    private Song song = new Song();
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Retrieve song details by ID
+        song = await Http.GetFromJsonAsync<Song>($"api/songs/{Id}");
+    }
+
+    private void EditSong(Guid id)
+    {
+        Navigation.NavigateTo($"/EditSong/{id}");
+    }
+}
+
+<div class="p-6 text-white">
+    <h1>Details</h1>
+    <h2>Title: @song.Title</h2>
+    <p>Artist: @song.Artist</p>
+    <p>Genre: @song.Genre</p>
+    @* if song rating is not null, display the rating : otherwise, display "No Rating" *@
+    <p>Rating: @(song.Rating != null ? song.Rating : "No rating")</p>
+    <p>Release Date: Unknown</p>
+    <p>album cover art</p>
+    <button class="bg-emerald-500 text-white px-4 py-2 mt-2 rounded" @onclick="() => EditSong(song.Id)">Edit</button>
+</div>

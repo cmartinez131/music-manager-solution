@@ -17,13 +17,14 @@ namespace music_manager_starter.Server.Controllers
             _context = context;
         }
 
-  
+        // Get all songs in the Song table
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Song>>> GetSongs()
         {
             return await _context.Songs.ToListAsync();
         }
 
+        // Create a new song and put it in the table
         [HttpPost]
         public async Task<ActionResult<Song>> PostSong(Song song)
         {
@@ -32,10 +33,61 @@ namespace music_manager_starter.Server.Controllers
                 return BadRequest("Song cannot be null.");
             }
 
-
             _context.Songs.Add(song);
             await _context.SaveChangesAsync();
 
+            return Ok();
+        }
+
+        // Get a single Song table in the table by a given id
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Song>> GetSong(Guid id)
+        {
+            var song = await _context.Songs.FindAsync(id);
+
+            if (song == null)
+            {
+                return NotFound();
+            }
+
+            return song;
+        }
+
+        // Edit an existing song in the table by a given id
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutSong(Guid id, Song song)
+        {
+            // Ensure that the id matches the song id
+            if (id != song.Id)
+            {
+                return BadRequest();
+            }
+
+            if (song == null)
+            {
+                return BadRequest("Song cannot be null.");
+            }
+
+            _context.Entry(song).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+            
+            return Ok();
+        }
+
+        // Delete a song from the table by a given id
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteSong(Guid id)
+        {
+            var song = await _context.Songs.FindAsync(id);
+
+            if (song == null)
+            {
+                return NotFound();
+            }
+
+            _context.Songs.Remove(song);
+            await _context.SaveChangesAsync();
+            
             return Ok();
         }
     }
