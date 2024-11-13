@@ -6,6 +6,8 @@
 
 @code {
     private List<Song> songs;
+    private List<Song> filteredSongs;
+    private string filterString = "";
     
     private float totalRating = 0;
     private float ratedSongs = 0;
@@ -14,9 +16,16 @@
     protected override async Task OnInitializedAsync()
     {
         songs = await Http.GetFromJsonAsync<List<Song>>("api/songs");
-        
+        filteredSongs = new List<Song>(songs);
         // Calculate the average rating of all the songs
-        foreach (var song in songs)
+        CalculateAverageRating();
+    }
+
+    private void CalculateAverageRating()
+    {
+        totalRating = 0;
+        ratedSongs = 0;
+        foreach (var song in filteredSongs)
         {
             if (song.Rating != null)
             {
@@ -24,12 +33,12 @@
                 ratedSongs += 1;
             }
         }
-
         if (ratedSongs > 0)
         {
             averageRating = totalRating / ratedSongs;
         }
-        else{
+        else
+        {
             averageRating = 0;
         }
     }
@@ -50,19 +59,62 @@
         if (response.IsSuccessStatusCode)
         {
             songs = await Http.GetFromJsonAsync<List<Song>>("api/songs");
+            // After deletion, filter reapply filter on all the songs
+            FilterAllSongs(filterString);
         }
+    }
+
+    // Filter the songs based on title, artist, album, or genre
+    private void OnSearchTextChange(ChangeEventArgs e)
+    {
+        // Convert event object e input to a string, or an empty string if e.value is empty
+        filterString = e.Value?.ToString() ?? "";
+
+        filterString = filterString.ToLower();
+        
+        FilterAllSongs(filterString);
+    }
+
+    private void FilterAllSongs(String keyword)
+    {
+        if (string.IsNullOrWhiteSpace(keyword))
+        {
+            // If there is no filter text, show all the songs
+            filteredSongs = new List<Song>(songs);
+        }
+        else
+        {
+            // Otherwise, filter the list of songs by making a new list and add songs that meet criteria
+            filteredSongs = new List<Song>();
+
+            foreach (var song in songs)
+            {
+                if ((!string.IsNullOrEmpty(song.Title) && song.Title.ToLower().Contains(keyword)) ||
+                    (!string.IsNullOrEmpty(song.Artist) && song.Artist.ToLower().Contains(keyword)) ||
+                    (!string.IsNullOrEmpty(song.Album) && song.Album.ToLower().Contains(keyword)) ||
+                    (!string.IsNullOrEmpty(song.Genre) && song.Genre.ToLower().Contains(keyword)))
+                {
+                    filteredSongs.Add(song);
+                }
+            }
+        }
+        // Recalculate average rating after every filter change
+        CalculateAverageRating();
     }
 
 }
 
 <div class="p-0 min-h-screen bg-pattern flex flex-col items-center justify-center">
     <h2 class="text-3xl font-bold text-white mb-8 text-center">Song Library</h2>
-    <h2 class="text-3xl font-bold text-white mb-8 text-center">Average Rating: @averageRating</h2>
-    
+    <h2 class="text-3xl font-bold text-white mb-8 text-center">Average Rating: @averageRating.ToString("F2")</h2>
+    <div class="fixed top-4 right-10 w-1/4">
+        <input type="text" @oninput="OnSearchTextChange" placeholder="Search..." class="bg-gray-700 text-white px-4 py-2 rounded-full focus:outline-none mb-4 w-full">
+    </div>
+
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-        @if (songs != null && songs.Count > 0)
+        @if (filteredSongs != null && filteredSongs.Count > 0)
         {
-            @foreach (var song in songs)
+            @foreach (var song in filteredSongs)
             {
                 <div class="glass p-6 border border-gray-300 rounded-lg text-white transition-transform transform hover:scale-105 hover:shadow-xl cursor-pointer">
                     <h3 class="text-xl font-semibold mb-2">@song.Title</h3>
