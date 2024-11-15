@@ -33,6 +33,11 @@ namespace music_manager_starter.Server.Controllers
                 return BadRequest("Song cannot be null.");
             }
 
+            if (song.Rating != null && (song.Rating < 1 || song.Rating > 10))
+            {
+                return BadRequest("Rating must be between 1 and 10, or leave it empty.");
+            }
+
             _context.Songs.Add(song);
             await _context.SaveChangesAsync();
 
@@ -66,6 +71,11 @@ namespace music_manager_starter.Server.Controllers
             if (song == null)
             {
                 return BadRequest("Song cannot be null.");
+            }
+
+            if (song.Rating != null && (song.Rating < 1 || song.Rating > 10))
+            {
+                return BadRequest("Rating must be between 1 and 10, or leave it empty.");
             }
 
             _context.Entry(song).State = EntityState.Modified;
