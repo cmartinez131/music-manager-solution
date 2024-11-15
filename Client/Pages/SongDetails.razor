@@ -20,14 +20,40 @@
     }
 }
 
-<div class="p-6 text-white">
-    <h1>Details</h1>
-    <h2>Title: @song.Title</h2>
-    <p>Artist: @song.Artist</p>
-    <p>Genre: @song.Genre</p>
-    @* if song rating is not null, display the rating : otherwise, display "No Rating" *@
-    <p>Rating: @(song.Rating != null ? song.Rating : "No rating")</p>
-    <p>Release Date: Unknown</p>
-    <p>album cover art</p>
-    <button class="bg-emerald-500 text-white px-4 py-2 mt-2 rounded" @onclick="() => EditSong(song.Id)">Edit</button>
+<div class="p-6 text-white bg-pattern min-h-screen flex justify-center text-center">
+    <div class="details-card rounded-lg w-1/2 shadow-md mb-80">
+        <div class="glass">
+            <div class="w-full aspect-square rounded-md flex items-center justify-center text-gray-500">
+                <p class="text-gray-200">Album cover art placeholder</p>
+            </div>
+        </div>
+        <div class="bg-gray-800 pt-4">
+            <p class="text-3xl font-bold text-left pl-4 pb-2">@song.Title</p>
+            <p class="text-2xl text-gray-400 text-left pl-4 pb-6">@song.Artist</p>
+            <p class="text-lg text-left pl-4 pb-2">Genre: @song.Genre</p>
+            <p class="text-lg text-left pl-4 pb-2">Release Date: Unknown</p>
+            @* if song rating is not null, display the rating : otherwise, display "No Rating" *@
+            <p class="text-lg text-left pl-4 pb-4">Rating: @(song.Rating != null ? $"{song.Rating}/10" : "No rating")</p>
+            <button class="bg-emerald-500 text-white px-4 py-2 rounded mb-6" @onclick="() => EditSong(song.Id)">Edit</button>
+        </div>
+    </div>
 </div>
+
+<style>
+    .bg-pattern {
+        background: linear-gradient( rgba(31, 41, 55, 0.7), rgba(31, 41, 55, 0.7) ), url('dalle.webp');
+        background-size: cover;
+        background-position: center;
+        font-family: 'Rajdhani', sans-serif;
+        background-attachment: fixed;
+    }
+
+    .glass {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px); 
+        border-radius: 10px; 
+        position: relative; 
+        overflow: hidden; 
+    }
+
+</style>

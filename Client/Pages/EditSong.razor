@@ -39,42 +39,66 @@
     }
 }
 
-<div class="p-6">
-    <h2 class="mb-4 text-xl font-semibold text-white">Edit Song</h2>
-    <EditForm Model="song" OnValidSubmit="HandleValidSubmit">
-        <DataAnnotationsValidator />
-        <ValidationSummary />
+<div class="p-8 min-h-screen bg-pattern mg-2">
+    <div class="bg-gray-800 glass rounded-lg p-8 shadow-lg max-w-md mx-auto">
+        <h2 class="text-2xl font-semibold text-white mb-6 text-center">Edit Song</h2>
 
-        <div class="mb-4">
-            <label class="block text-gray-200">Title</label>
-            <InputText @bind-Value="song.Title" class="mt-1 block w-full p-2 border rounded" />
-        </div>
+        <EditForm Model="song" OnValidSubmit="HandleValidSubmit">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
 
-        <div class="mb-4">
-            <label class="block text-gray-200">Artist</label>
-            <InputText @bind-Value="song.Artist" class="mt-1 block w-full p-2 border rounded" />
-        </div>
+            <div class="mb-6">
+                <label class="block text-gray-200 mb-2">Title</label>
+                <InputText @bind-Value="song.Title" class="w-full p-3 border border-gray-600 rounded-lg" />
+            </div>
 
-        <div class="mb-4">
-            <label class="block text-gray-200">Album</label>
-            <InputText @bind-Value="song.Album" class="mt-1 block w-full p-2 border rounded" />
-        </div>
+            <div class="mb-6">
+                <label class="block text-gray-200 mb-2">Artist</label>
+                <InputText @bind-Value="song.Artist" class="w-full p-3 border border-gray-600 rounded-lg" />
+            </div>
 
-        <div class="mb-4">
-            <label class="block text-gray-200">Genre</label>
-            <InputText @bind-Value="song.Genre" class="mt-1 block w-full p-2 border rounded" />
-        </div>
+            <div class="mb-6">
+                <label class="block text-gray-200 mb-2">Album</label>
+                <InputText @bind-Value="song.Album" class="w-full p-3 border border-gray-600 rounded-lg" />
+            </div>
 
-        <div class="mb-4">
-            <label class="block text-gray-200">Rating</label>
-            <InputNumber @bind-Value="song.Rating" class="mt-1 block w-full p-2 border rounded" />
-        </div>
-        <button type="submit" class="bg-purple-600 text-white px-2 py-2 rounded">Update Song</button>
-    </EditForm>
-    <button @onclick="() => CancelEdit()" class="bg-slate-600 text-white px-2 py-2 mt-2 rounded">Cancel</button>
+            <div class="mb-6">
+                <label class="block text-gray-200 mb-2">Genre</label>
+                <InputText @bind-Value="song.Genre" class="w-full p-3 border border-gray-600 rounded-lg" />
+            </div>
 
-    @if (message != null)
-    {
-        <p class="mt-4 text-green-500">@message</p>
-    }
+            <div class="mb-6">
+                <label class="block text-gray-200 mb-2">Rating (Optional, 1-10)</label>
+                <InputNumber @bind-Value="song.Rating" class="w-full p-3 border border-gray-600 rounded-lg" />
+            </div>
+
+            <div class="flex space-x-4">
+                <button type="submit" class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg w-full mt-4">Update Song</button>
+                <button @onclick="CancelEdit" type="button" class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg w-full mt-4">Cancel</button>
+            </div>
+        </EditForm>
+
+        @if (message != null)
+        {
+            <p class="mt-6 text-green-500 text-center">@message</p>
+        }
+    </div>
 </div>
+
+<style>
+    .bg-pattern {
+        background: linear-gradient( rgba(31, 41, 55, 0.7), rgba(31, 41, 55, 0.7) ), url('dalle.webp');
+        background-size: cover;
+        background-position: center;
+        font-family: 'Rajdhani', sans-serif;
+        background-attachment: fixed;
+    }
+
+    .glass {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px); 
+        border-radius: 10px; 
+        position: relative; 
+        overflow: hidden; 
+    }
+</style>
