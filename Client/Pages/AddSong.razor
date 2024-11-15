@@ -29,42 +29,67 @@
     }
 }
 
-<div class="p-6">
-    <h2 class="text-xl font-semibold text-white">Add New Song</h2>
-    <EditForm Model="newSong" OnValidSubmit="HandleValidSubmit">
-        <DataAnnotationsValidator />
-        <ValidationSummary />
+<div class="p-8 min-h-screen bg-pattern mg-2">
+    <div class="bg-gray-800 glass rounded-lg p-8 max-w-lg mx-auto shadow">
 
-        <div class="mb-4">
-            <label class="block text-gray-200">Title</label>
-            <InputText @bind-Value="newSong.Title" class="mt-1 block w-full p-2 border rounded" />
-        </div>
+        <h2 class="text-center text-2xl font-semibold text-white mb-6">Add New Song</h2>
+        
+        <EditForm Model="newSong" OnValidSubmit="HandleValidSubmit">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
 
-        <div class="mb-4">
-            <label class="block text-gray-200">Artist</label>
-            <InputText @bind-Value="newSong.Artist" class="mt-1 block w-full p-2 border rounded" />
-        </div>
+            <div class="mb-6">
+                <label class="block text-gray-200 mb-2">Title</label>
+                <InputText @bind-Value="newSong.Title" class="w-full p-3 border border-gray-600 rounded-lg" />
+            </div>
 
-        <div class="mb-4">
-            <label class="block text-gray-200">Album</label>
-            <InputText @bind-Value="newSong.Album" class="mt-1 block w-full p-2 border rounded" />
-        </div>
+            <div class="mb-6">
+                <label class="block text-gray-200 mb-2">Artist</label>
+                <InputText @bind-Value="newSong.Artist" class="w-full p-3 border border-gray-600 rounded-lg" />
+            </div>
 
-        <div class="mb-4">
-            <label class="block text-gray-200">Genre</label>
-            <InputText @bind-Value="newSong.Genre" class="mt-1 block w-full p-2 border rounded" />
-        </div>
+            <div class="mb-6">
+                <label class="block text-gray-200 mb-2">Album</label>
+                <InputText @bind-Value="newSong.Album" class="w-full p-3 border border-gray-600 rounded-lg" />
+            </div>
 
-        <div class="mb-4">
-            <label class="block text-gray-200">Optional Rating between 1 and 10</label>
-            <InputNumber @bind-Value="newSong.Rating" class="mt-1 block w-full p-2 border rounded" />
-        </div>
+            <div class="mb-6">
+                <label class="block text-gray-200 mb-2">Genre</label>
+                <InputText @bind-Value="newSong.Genre" class="w-full p-3 border border-gray-600 rounded-lg" />
+            </div>
 
-        <button type="submit" class="bg-purple-600 text-white px-4 py-2 rounded">Add Song</button>
-    </EditForm>
+            <div class="mb-6">
+                <label class="block text-gray-200 mb-2">Optional Rating between 1 and 10</label>
+                <InputNumber @bind-Value="newSong.Rating" class="w-full p-3 border border-gray-600 rounded-lg " />
+            </div>
 
-    @if (message != null)
-    {
-        <p class="mt-4 text-green-500">@message</p>
-    }
+            <button type="submit" class="bg-purple-600 text-white text-lg px-4 py-2 rounded-lg w-full mt-4 hover:bg-purple-700">Add Song</button>
+        </EditForm>
+
+        @if (message != null)
+        {
+            <p class="mt-6 text-green-500 text-center">@message</p>
+        }
+    </div>
 </div>
+
+
+<style>
+    .bg-pattern {
+        background: linear-gradient( rgba(31, 41, 55, 0.7), rgba(31, 41, 55, 0.7) ), url('dalle.webp');
+        background-size: cover;
+        background-position: center;
+        font-family: 'Rajdhani', sans-serif;
+        background-attachment: fixed;
+    }
+
+
+    .glass {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px); 
+        border-radius: 10px; 
+        position: relative; 
+        overflow: hidden; 
+    }
+
+</style>

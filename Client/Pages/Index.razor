@@ -13,7 +13,7 @@
     private float ratedSongs = 0;
     private float averageRating = 0;
     // Songs are displayed as cards by default
-    private string songsDisplay = "card";
+    private string songsDisplay = "list";
 
     protected override async Task OnInitializedAsync()
     {
@@ -150,7 +150,7 @@
     }
 }
 
-<div class="p-0 min-h-screen bg-pattern flex flex-col items-center justify-center">
+<div class="min-h-screen bg-pattern flex flex-col items-center">
     <h2 class="text-4xl font-bold text-white mb-8 text-center pt-4">Song Library</h2>
     <div class="fixed top-4 right-10 w-1/4">
         <input type="text" @oninput="OnSearchTextChange" placeholder="Search..." class="bg-gray-700 text-white px-4 py-2 rounded-full focus:outline-none mb-4 w-full">
@@ -161,7 +161,7 @@
     
         <div>
             <label class="text-white" for="sortOption"> Sort songs by:</label>
-            <select @onchange="OnSortOptionChange" name="sortOption" id="sortOption">
+            <select @onchange="OnSortOptionChange" name="sortOption" id="sortOption" class="glass bg-gray-400 text-white px-1 py-2 rounded">
                 <option value="earliestAdded">Earliest Added</option>
                 <option value="recentlyAdded">Recently Added</option>
                 <option value="titleAscending">Title (A - Z)</option>
@@ -173,9 +173,9 @@
 
         <div >
             <label class="text-white" for="displayOption"> View As:</label>
-            <select @onchange="OnDisplayOptionChange" name="displayOption" id="displayOption">
-                <option value="card">Card</option>
+            <select @onchange="OnDisplayOptionChange" name="displayOption" id="displayOption" class="glass bg-gray-400 text-white px-1 py-2 rounded">
                 <option value="list">List</option>
+                <option value="card">Card</option>
             </select>
         </div>
     </div>
@@ -189,12 +189,11 @@
                 @foreach (var song in filteredSongs)
                 {
                     <div class="glass p-6 border border-gray-300 rounded-lg text-white transition-transform transform hover:scale-105 hover:shadow-xl cursor-pointer">
-                        <h3 class="text-xl font-semibold mb-2">@song.Title</h3>
+                        <button class="text-left text-xl font-semibold mb-2" @onclick="() => GoToSongDetails(song.Id)">@song.Title</button> 
                         <p class="text-md">Artist: <span class="font-light">@song.Artist</span></p>
                         <p class="text-md">Rating: <span class="font-light">@song.Rating</span></p>
-                        <button class="bg-blue-500 text-white px-4 py-2 mt-1 rounded" @onclick="() => GoToSongDetails(song.Id)">Details</button>
-                        <button class="bg-fuchsia-500 text-white px-4 py-2 mt-2 rounded" @onclick="() => EditSong(song.Id)">Edit</button>
-                        <button class="bg-red-500 text-white px-4 py-2 mt-2 rounded" @onclick="() => DeleteSong(song.Id)">Delete</button>
+                        <button class="bg-purple-500 text-white px-3 py-1 mt-2 rounded" @onclick="() => EditSong(song.Id)">Edit</button>
+                        <button class="bg-red-400 text-white px-2 py-1 mt-2 rounded" @onclick="() => DeleteSong(song.Id)">Delete</button>
                     </div>
                 }
             }
@@ -220,14 +219,14 @@
                 {
                     <tr class="glass bg-slate-900 hover:bg-slate-400 transition">
                         <td class="text-lg pl-2">@(filteredSongs.IndexOf(song) + 1)</td>
-                        <td class="text-xl text-white font-medium truncate">
+                        <td class="text-xl text-white font-medium">
                             <button @onclick="() => GoToSongDetails(song.Id)">@song.Title</button> 
                             <br><span class="text-sm text-neutral-200 font-normal">@song.Artist</span>
                         </td>
                         <td class="text-white">@song.Album</td>
                         <td class="text-neutral-200 pl-4">@song.Rating</td>
                         <td class="py-4">
-                            <button class="bg-purple-500 text-white px-2 py-1 rounded text-sm" @onclick="() => EditSong(song.Id)">Edit</button>
+                            <button class="bg-purple-500 text-white px-3 py-1 rounded text-sm" @onclick="() => EditSong(song.Id)">Edit</button>
                             <button class="bg-red-400 text-white px-2 py-1 rounded text-sm" @onclick="() => DeleteSong(song.Id)">Delete</button>
                         </td>
                     </tr>
