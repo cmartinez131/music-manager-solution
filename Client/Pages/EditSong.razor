@@ -20,6 +20,9 @@
 
     private async Task HandleValidSubmit()
     {
+        // Make API request to get the song by id.
+        var response = await Http.PutAsJsonAsync($"api/songs/{song.Id}", song);
+        
         // Check thet the rating is between 1 and 10 or the rating. the Rating attribute is optional
         if (song.Rating != null && (song.Rating < 1 || song.Rating > 10))
         {
@@ -31,9 +34,6 @@
             message = "Enter a valid year between 1900 and 2024, or leave it empty.";
             return;
         }
-        
-        // Make API request only if the submit form is valid
-        var response = await Http.PutAsJsonAsync($"api/songs/{song.Id}", song);
         
         if (response.IsSuccessStatusCode)
         {

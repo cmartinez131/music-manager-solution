@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using music_manager_starter.Data;
 using System.Security.AccessControl;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,14 @@ builder.Services.AddDbContext<DataDbContext>(options => options.UseSqlite(builde
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+
+// Configure Serilog globally for logging to the console.
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .WriteTo.File("Logs/logs.txt", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
+
+Log.Information("The global logger has been configured.");
 
 var app = builder.Build();
 
