@@ -9,7 +9,6 @@
 
     private async Task HandleValidSubmit()
     {
-        var response = await Http.PostAsJsonAsync("api/songs", newSong);
 
         if (newSong.Rating != null && (newSong.Rating < 1 || newSong.Rating > 10))
         {
@@ -17,6 +16,15 @@
             return;
         }
 
+        if (newSong.ReleaseYear != null && (newSong.ReleaseYear < 1900 || newSong.ReleaseYear > 2024))
+        {
+            message = "Enter a valid rating between 1900 and 2024, or leave it empty.";
+            return;
+        }
+
+        // Make API request only if the submit form is valid
+        var response = await Http.PostAsJsonAsync("api/songs", newSong);
+        
         if (response.IsSuccessStatusCode)
         {
             message = "Song added successfully!";
@@ -38,32 +46,37 @@
             <DataAnnotationsValidator />
             <ValidationSummary />
 
-            <div class="mb-6">
+            <div class="mb-4">
                 <label class="block text-gray-200 mb-2">Title</label>
-                <InputText @bind-Value="newSong.Title" class="w-full p-3 border border-gray-600 rounded-lg" />
+                <InputText @bind-Value="newSong.Title" class="w-full p-2 border border-gray-600 rounded-lg" />
             </div>
 
-            <div class="mb-6">
+            <div class="mb-4">
                 <label class="block text-gray-200 mb-2">Artist</label>
-                <InputText @bind-Value="newSong.Artist" class="w-full p-3 border border-gray-600 rounded-lg" />
+                <InputText @bind-Value="newSong.Artist" class="w-full p-2 border border-gray-600 rounded-lg" />
             </div>
 
-            <div class="mb-6">
+            <div class="mb-4">
                 <label class="block text-gray-200 mb-2">Album</label>
-                <InputText @bind-Value="newSong.Album" class="w-full p-3 border border-gray-600 rounded-lg" />
+                <InputText @bind-Value="newSong.Album" class="w-full p-2 border border-gray-600 rounded-lg" />
             </div>
 
-            <div class="mb-6">
+            <div class="mb-4">
                 <label class="block text-gray-200 mb-2">Genre</label>
-                <InputText @bind-Value="newSong.Genre" class="w-full p-3 border border-gray-600 rounded-lg" />
+                <InputText @bind-Value="newSong.Genre" class="w-full p-2 border border-gray-600 rounded-lg" />
             </div>
 
-            <div class="mb-6">
+            <div class="mb-4">
                 <label class="block text-gray-200 mb-2">Optional Rating between 1 and 10</label>
-                <InputNumber @bind-Value="newSong.Rating" class="w-full p-3 border border-gray-600 rounded-lg " />
+                <InputNumber @bind-Value="newSong.Rating" class="w-full p-2 border border-gray-600 rounded-lg " />
             </div>
 
-            <button type="submit" class="bg-purple-600 text-white text-lg px-4 py-2 rounded-lg w-full mt-4 hover:bg-purple-700">Add Song</button>
+            <div class="mb-4">
+                <label class="block text-gray-200 mb-2">Optional Release Year</label>
+                <InputNumber @bind-Value="newSong.ReleaseYear" class="w-full p-2 border border-gray-600 rounded-lg " />
+            </div>
+
+            <button type="submit" class="bg-purple-600 text-white text-lg px-3 py-2 rounded-lg w-full mt-4 hover:bg-purple-700">Add Song</button>
         </EditForm>
 
         @if (message != null)

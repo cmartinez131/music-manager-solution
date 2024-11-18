@@ -37,6 +37,11 @@ namespace music_manager_starter.Server.Controllers
             {
                 return BadRequest("Rating must be between 1 and 10, or leave it empty.");
             }
+            
+            if (song.ReleaseYear != null && (song.ReleaseYear < 1900 || song.ReleaseYear > 2024))
+            {
+                return BadRequest("Enter a valid year between 1900 and 2024.");
+            }
 
             _context.Songs.Add(song);
             await _context.SaveChangesAsync();
@@ -76,6 +81,11 @@ namespace music_manager_starter.Server.Controllers
             if (song.Rating != null && (song.Rating < 1 || song.Rating > 10))
             {
                 return BadRequest("Rating must be between 1 and 10, or leave it empty.");
+            }
+
+            if (song.ReleaseYear != null && (song.ReleaseYear < 1900 || song.ReleaseYear > 2024))
+            {
+                return BadRequest("Rating must be a valid year between 1900 and 2024.");
             }
 
             _context.Entry(song).State = EntityState.Modified;

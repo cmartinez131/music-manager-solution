@@ -33,7 +33,8 @@
             <p class="text-lg text-left pl-4 pb-2">Genre: @song.Genre</p>
             <p class="text-lg text-left pl-4 pb-2">Release Date: Unknown</p>
             @* if song rating is not null, display the rating : otherwise, display "No Rating" *@
-            <p class="text-lg text-left pl-4 pb-4">Rating: @(song.Rating != null ? $"{song.Rating}/10" : "No rating")</p>
+            <p class="text-lg text-left pl-4 pb-2">Rating: @(song.Rating != null ? $"{song.Rating}/10" : "No rating")</p>
+            <p class="text-lg text-left pl-4 pb-4">Released: @(song.ReleaseYear != null ? song.ReleaseYear : "Unknown")</p>
             <button class="bg-emerald-500 text-white px-4 py-2 rounded mb-6" @onclick="() => EditSong(song.Id)">Edit</button>
         </div>
     </div>
