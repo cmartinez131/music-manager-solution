@@ -14,5 +14,6 @@ namespace music_manager_starter.Data.Models
         public string Album { get; set; }
         public string Genre { get; set; }
         public int? Rating { get; set; }
+        public int? ReleaseYear { get; set; }
     }
 }
