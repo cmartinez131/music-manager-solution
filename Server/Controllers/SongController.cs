@@ -2,7 +2,9 @@
 using Microsoft.EntityFrameworkCore;
 using music_manager_starter.Data;
 using music_manager_starter.Data.Models;
+using Serilog;
 using System;
+using System.Linq.Expressions;
 
 namespace music_manager_starter.Server.Controllers
 {
@@ -21,94 +23,147 @@ namespace music_manager_starter.Server.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Song>>> GetSongs()
         {
-            return await _context.Songs.ToListAsync();
+            try
+            {
+                Log.Information("All songs fetched from database.");
+                return await _context.Songs.ToListAsync();
+            }
+            catch(Exception ex)
+            {
+                Log.Error(ex, "Error trying to fetch all songs from database.");
+                return BadRequest("Error trying to fetch all songs from database.");
+            }
         }
+        
 
         // Create a new song and put it in the table
         [HttpPost]
         public async Task<ActionResult<Song>> PostSong(Song song)
         {
-            if (song == null)
+            try
             {
-                return BadRequest("Song cannot be null.");
-            }
+                if (song == null)
+                {
+                    Log.Warning("Invalid Request. Song cannot be null.");
+                    return BadRequest("Song cannot be null.");
+                }
 
-            if (song.Rating != null && (song.Rating < 1 || song.Rating > 10))
+                if (song.Rating != null && (song.Rating < 1 || song.Rating > 10))
+                {
+                    Log.Warning($"Invalid Request. Rating {song.Rating} must be between 1 and 10, or empty.", song.Rating);
+                    return BadRequest("Rating must be between 1 and 10, or leave it empty.");
+                }
+                
+                if (song.ReleaseYear != null && (song.ReleaseYear < 1900 || song.ReleaseYear > 2024))
+                {
+                    Log.Warning($"Invalid Request. Year {song.ReleaseYear} must be between 1900 and 2024, or empty.", song.ReleaseYear);
+                    return BadRequest("Enter a valid year between 1900 and 2024.");
+                }
+
+                _context.Songs.Add(song);
+                await _context.SaveChangesAsync();
+                Log.Information($"New Song {song.Title} create in database.");
+                return Ok();
+            }
+            catch (Exception ex)
             {
-                return BadRequest("Rating must be between 1 and 10, or leave it empty.");
+                Log.Error(ex, "Error trying to create new song.");
+                return BadRequest("Error trying to create new song.");
             }
-            
-            if (song.ReleaseYear != null && (song.ReleaseYear < 1900 || song.ReleaseYear > 2024))
-            {
-                return BadRequest("Enter a valid year between 1900 and 2024.");
-            }
-
-            _context.Songs.Add(song);
-            await _context.SaveChangesAsync();
-
-            return Ok();
         }
 
         // Get a single Song table in the table by a given id
         [HttpGet("{id}")]
         public async Task<ActionResult<Song>> GetSong(Guid id)
         {
-            var song = await _context.Songs.FindAsync(id);
-
-            if (song == null)
+            try
             {
-                return NotFound();
-            }
+                var song = await _context.Songs.FindAsync(id);
 
-            return song;
+                if (song == null)
+                {
+                    Log.Warning("Invalid Request. Song cannot be null.");
+                    return NotFound();
+                }
+                Log.Information($"Song: {song.Title} details retrieved from database.", song.Title);
+                return song;
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, $"Error trying to get song by Id {id}.");
+                return BadRequest($"Error trying to get song by Id {id}.");
+            }
         }
 
         // Edit an existing song in the table by a given id
         [HttpPut("{id}")]
         public async Task<IActionResult> PutSong(Guid id, Song song)
         {
-            // Ensure that the id matches the song id
-            if (id != song.Id)
+            try
             {
-                return BadRequest();
-            }
+                // Ensure that the id matches the song id
+                if (id != song.Id)
+                {
+                    Log.Warning("Invalid Request. Song id must match song id in database.", song.Id);
+                    return BadRequest();
+                }
 
-            if (song == null)
+                if (song == null)
+                {
+                    Log.Warning("Invalid Request. Song cannot be null.");
+                    return BadRequest("Song cannot be null.");
+                }
+
+                if (song.Rating != null && (song.Rating < 1 || song.Rating > 10))
+                {
+                    Log.Warning($"Invalid Request. Rating: {song.Rating} must be between 1 and 10, or leave it empty.");
+                    return BadRequest("Rating must be between 1 and 10, or leave it empty.");
+                }
+
+                if (song.ReleaseYear != null && (song.ReleaseYear < 1900 || song.ReleaseYear > 2024))
+                {
+                    Log.Warning($"Invalid Request. Release Year: {song.ReleaseYear} must be a valid year between 1900 and 2024.");
+                    return BadRequest("Rating must be a valid year between 1900 and 2024.");
+                }
+
+                _context.Entry(song).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+                
+                Log.Information($"Song: {song.Title} updated in database.");
+                return Ok();
+            }
+            catch (Exception ex)
             {
-                return BadRequest("Song cannot be null.");
+                Log.Error(ex, $"Error trying to edit existing song {song.Title}");
+                return BadRequest($"Error trying to edit existing song {song.Title}");
             }
-
-            if (song.Rating != null && (song.Rating < 1 || song.Rating > 10))
-            {
-                return BadRequest("Rating must be between 1 and 10, or leave it empty.");
-            }
-
-            if (song.ReleaseYear != null && (song.ReleaseYear < 1900 || song.ReleaseYear > 2024))
-            {
-                return BadRequest("Rating must be a valid year between 1900 and 2024.");
-            }
-
-            _context.Entry(song).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
-            
-            return Ok();
         }
 
         // Delete a song from the table by a given id
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSong(Guid id)
         {
-            var song = await _context.Songs.FindAsync(id);
-
-            if (song == null)
+            try
             {
-                return NotFound();
-            }
+                var song = await _context.Songs.FindAsync(id);
 
-            _context.Songs.Remove(song);
-            await _context.SaveChangesAsync();
-            
-            return Ok();
+                if (song == null)
+                {
+                    Log.Warning("Song does not exist in database.");
+                    return NotFound();
+                }
+
+                _context.Songs.Remove(song);
+                await _context.SaveChangesAsync();
+                
+                Log.Information($"Song: {song.Title} deleted from database.");
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, $"Error trying to delete song with id {id}");
+                return BadRequest($"Error trying to delete song with id {id}");
+            }
         }
     }
 }

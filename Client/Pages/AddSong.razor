@@ -10,6 +10,9 @@
     private async Task HandleValidSubmit()
     {
 
+        // Make API to create a new song in database.
+        var response = await Http.PostAsJsonAsync("api/songs", newSong);
+        
         if (newSong.Rating != null && (newSong.Rating < 1 || newSong.Rating > 10))
         {
             message = "Enter a valid rating between 1 and 10, or leave it empty.";
@@ -22,8 +25,6 @@
             return;
         }
 
-        // Make API request only if the submit form is valid
-        var response = await Http.PostAsJsonAsync("api/songs", newSong);
         
         if (response.IsSuccessStatusCode)
         {
